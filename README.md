@@ -128,3 +128,7 @@ ref:https://www.intechopen.com/chapters/19654
 60 - https://radiologykey.com/forearm-fractures-2/
 
 61 - https://www.researchgate.net/publication/352388960_Long-term_Evaluation_Using_Finite_Element_Analysis_of_Bone_Atrophy_Changes_after_Locking_Plate_Fixation_of_Forearm_Diaphyseal_Fracture/figures?lo=1
+
+62 - https://www.researchgate.net/publication/259882759_Plating_in_diaphyseal_fractures_of_the_forearm
+
+
