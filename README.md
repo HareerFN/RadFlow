@@ -112,3 +112,19 @@ ref:https://www.intechopen.com/chapters/19654
 52 - https://www.researchgate.net/publication/342667289_Outcome_and_complications_of_distal_tibia_fractures_treated_with_intramedullary_nails_versus_minimally_invasive_plate_osteosynthesis_and_the_role_of_fibula_fixation/figures?lo=1
 
 53 - https://www.researchgate.net/publication/342667289_Outcome_and_complications_of_distal_tibia_fractures_treated_with_intramedullary_nails_versus_minimally_invasive_plate_osteosynthesis_and_the_role_of_fibula_fixation/figures?lo=1
+
+54 - https://ajms.alameenmedical.org/ArticlePDFs/15%20AJMS%20V17.N2.2024%20p%20182-190.pdf
+
+55 - https://www.wjgnet.com/2218-5836/full/v16/i5/102916.htm?appgw_azwaf_jsc=vEouNRFlbl48c5Ldq3rkoEWejYUyZy0xq7VxYlREQh8PUL_v7czM-gVwMT8FozXD_HT8vj1a1VibUPs6c6fC79r1jaWoHl8fQFcRBFxnFUF-Csx2sEdZ4aD-IHdz5DoGHy3gv-43tzHVmJztiFDkfXI1vjLTzFlVgaeE-UmxYOwXYkFmVM85rzeqIB9QFnlrhhueJLRB3z-RlZ75P2TikAyw46dFtrYaMMaUmD0Nqn5c_k3IcHbH9KZ6eT8FvSHyY-g6xConiEjD7iLkw9nj-O8s9yz07e2BpTKWplIgYJwZK2YORT2OJhXjmV74SkqhG-zTMjYht03OhWA_baunPw
+
+56 - https://www.reddit.com/r/ORIF/comments/1iaxrnw/comment/m9jeee9/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
+
+57 - https://radiologyassistant.nl/musculoskeletal/wrist/fractures#treatment
+
+58 - https://radiologykey.com/distal-tibia-fractures/
+
+59 - https://radiologykey.com/101-fracture-nonunion/
+
+60 - https://radiologykey.com/forearm-fractures-2/
+
+61 - https://www.researchgate.net/publication/352388960_Long-term_Evaluation_Using_Finite_Element_Analysis_of_Bone_Atrophy_Changes_after_Locking_Plate_Fixation_of_Forearm_Diaphyseal_Fracture/figures?lo=1
