@@ -8,3 +8,4 @@ Resources
 7 https://www.istockphoto.com/search/2/image-film?phrase=fracture+shaft+of+femur&tracked_gsrp_landing=https%3A%2F%2Fwww.istockphoto.com%2Fphotos%2Ffracture-shaft-of-femur	
 8 https://radiopaedia.org/cases/lower-leg-fracture-1?utm_source=chatgpt.com
 9 https://radiopaedia.org/cases/both-bone-forearm-fracture?utm_source=chatgpt.com
+10 https://journals.lww.com/md-journal/Fulltext/2017/12010/Fat_grafting_for_resurfacing_an_exposed_implant_in.57.aspx
