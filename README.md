@@ -6,3 +6,5 @@ Resources
 5 https://orthoinfo.aaos.org/en/diseases--conditions/open-fractures/	
 6 https://orthoinfo.aaos.org/en/diseases--conditions/ankle-fractures-broken-ankle/?utm_source=chatgpt.com	
 7 https://www.istockphoto.com/search/2/image-film?phrase=fracture+shaft+of+femur&tracked_gsrp_landing=https%3A%2F%2Fwww.istockphoto.com%2Fphotos%2Ffracture-shaft-of-femur	
+8 https://radiopaedia.org/cases/lower-leg-fracture-1?utm_source=chatgpt.com
+9 https://radiopaedia.org/cases/both-bone-forearm-fracture?utm_source=chatgpt.com
