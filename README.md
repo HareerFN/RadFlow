@@ -13,3 +13,4 @@ Resources
 12 https://www.mdpi.com/2411-5142/6/2/46
 13 https://www.researchgate.net/figure/Radiographic-follow-up-of-bridge-fixation-of-a-middle-third-diaphysis-spiral-fracture-in_fig3_352616294
 14 https://www.koudoukai.or.jp/kayashima-hp/see/see11.html
+15 https://deyixueyuan.com/info/591
