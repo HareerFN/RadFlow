@@ -15,3 +15,4 @@ Resources
 14 https://www.koudoukai.or.jp/kayashima-hp/see/see11.html
 15 https://deyixueyuan.com/info/591
 16 https://casereports.bmj.com/content/14/1/e236098
+17 https://www.aofoundation.org/approved/approvedsolutionsfolder/2006/distal-femoral-nail-with-spiral-blade#tab=details;
