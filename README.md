@@ -9,3 +9,4 @@ Resources
 8 https://radiopaedia.org/cases/lower-leg-fracture-1?utm_source=chatgpt.com
 9 https://radiopaedia.org/cases/both-bone-forearm-fracture?utm_source=chatgpt.com
 10 https://journals.lww.com/md-journal/Fulltext/2017/12010/Fat_grafting_for_resurfacing_an_exposed_implant_in.57.aspx
+11 https://link.springer.com/article/10.1007%2Fs10039-017-0279-1
