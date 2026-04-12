@@ -17,3 +17,4 @@ Resources
 16 https://casereports.bmj.com/content/14/1/e236098
 17 https://www.aofoundation.org/approved/approvedsolutionsfolder/2006/distal-femoral-nail-with-spiral-blade#tab=details;
 18 https://journals.lww.com/fjmd/fulltext/2023/14020/similar_surgical_outcome_between_locking_plate.4.aspx
+19 https://www.enlife.ro/cumpara/placa-de-femur-distal-vortex-%E2%80%93-fixare-poliaxiala-579
