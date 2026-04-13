@@ -100,3 +100,11 @@
 
 
 34 https://pmc.ncbi.nlm.nih.gov/articles/PMC4223765/
+
+
+35 https://txosa.com/femoral-fracture/
+
+
+36 https://clinicalpub.com/fractures-of-the-shoulder-arm-and-forearm/
+
+37 https://clinicalpub.com/fractures-of-the-shoulder-arm-and-forearm/
