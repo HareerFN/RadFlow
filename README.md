@@ -58,3 +58,11 @@
 
 20 https://www.injuryjournal.com/article/S0020-1383(10)00692-3/abstract
 
+
+21 https://journals.lww.com/jaaos/Fulltext/2017/04000/Management_of_Interprosthetic_Femur_Fractures.10.aspx
+
+
+22 https://pmc.ncbi.nlm.nih.gov/articles/PMC4223765/
+
+
+23 https://journals.lww.com/pedorthopaedics/Abstract/2009/10000/Implant_Removal_After_Submuscular_Plating_for.10.aspx
