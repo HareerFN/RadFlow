@@ -79,4 +79,8 @@
 
 27 https://www.renoortho.com/specialties/center-for-fracture-trauma/humeral-shaft/
 
-28 
+
+28 https://moopanarortho.com.au/procedures/shoulder-fracture-management
+
+
+29
