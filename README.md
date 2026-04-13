@@ -108,3 +108,6 @@
 36 https://clinicalpub.com/fractures-of-the-shoulder-arm-and-forearm/
 
 37 https://clinicalpub.com/fractures-of-the-shoulder-arm-and-forearm/
+
+38 a & b https://musculoskeletalkey.com/skateboarding-injuries/
+
