@@ -90,3 +90,8 @@
 
 
 31  https://www.schreibermd.com/humerus-fracture
+
+
+32 https://link.springer.com/article/10.1007/s00104-009-1750-8
+
+
