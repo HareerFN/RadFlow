@@ -70,6 +70,8 @@
 
 24 https://www.researchgate.net/publication/346347400_Minimally_invasive_plate_osteosynthesis_for_short_oblique_diaphyseal_tibia_fractures_does_fracture_site_affect_the_outcomes/figures?lo=1
 
+25
+
 
 26 https://www.mdpi.com/2077-0383/13/3/755
 
