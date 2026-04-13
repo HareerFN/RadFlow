@@ -83,4 +83,4 @@
 28 https://moopanarortho.com.au/procedures/shoulder-fracture-management
 
 
-29
+29  https://www.schreibermd.com/humerus-fracture
