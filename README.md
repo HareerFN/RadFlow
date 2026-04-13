@@ -98,3 +98,5 @@
 
 33 https://surgeryreference.aofoundation.org/orthopedic-trauma/adult-trauma/distal-tibia/basic-technique/assessment-of-reduction-a-fractures#axial-alignment
 
+
+34 https://pmc.ncbi.nlm.nih.gov/articles/PMC4223765/
