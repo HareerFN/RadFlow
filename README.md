@@ -66,3 +66,8 @@
 
 
 23 https://journals.lww.com/pedorthopaedics/Abstract/2009/10000/Implant_Removal_After_Submuscular_Plating_for.10.aspx
+
+
+24 https://www.researchgate.net/publication/346347400_Minimally_invasive_plate_osteosynthesis_for_short_oblique_diaphyseal_tibia_fractures_does_fracture_site_affect_the_outcomes/figures?lo=1
+
+
