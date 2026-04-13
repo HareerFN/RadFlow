@@ -111,3 +111,6 @@
 
 38 a & b https://musculoskeletalkey.com/skateboarding-injuries/
 
+
+39 https://journals.lww.com/pedorthopaedics/Abstract/2017/10000/Elastic_Intramedullary_Nailing_Versus_Open.3.aspx
+
