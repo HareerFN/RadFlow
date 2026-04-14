@@ -114,3 +114,5 @@
 
 39 https://journals.lww.com/pedorthopaedics/Abstract/2017/10000/Elastic_Intramedullary_Nailing_Versus_Open.3.aspx
 
+
+40 https://www.researchgate.net/publication/362109598_Comparison_of_three_different_surgical_treatment_methods_in_humeral_shaft_fractures/figures?lo=1
