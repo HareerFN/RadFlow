@@ -43,7 +43,7 @@ The system generates a complete orthopedic healing journey from a single fractur
 
 <p align="center">
   <a href="https://drive.google.com/drive/folders/1smtEcnoBsf3iA3AbAkmgPGKE9YfdgJaa?usp=sharing">
-    <img src="images/interface_step2.png" width="85%">
+    <img src="images/interface_step2.jpg" width="85%">
   </a>
 </p>
 
@@ -79,7 +79,7 @@ RadFlow addresses this gap by introducing a multimodal educational AI framework 
 ## Step 1 — Fracture Input
 
 <p align="center">
-  <img src="images/interface_step1.png" width="90%">
+  <img src="images/interface_step1.jpg" width="90%">
 </p>
 
 The system begins with a fracture X-ray and implant mask selection.
@@ -91,7 +91,7 @@ The fracture region and implant guidance masks are used as spatial conditioning 
 ## Step 2 — AI Generated Progression
 
 <p align="center">
-  <img src="images/interface_step2.png" width="90%">
+  <img src="images/interface_step2.jpg" width="90%">
 </p>
 
 RadFlow generates:
@@ -106,7 +106,7 @@ The generated sequence provides patients with a simplified understanding of the 
 # 3D Reconstruction
 
 <p align="center">
-  <img src="images/3d_reconstruction.png" width="100%">
+  <img src="images/3d_reconstruction.jpg" width="100%">
 </p>
 
 RadFlow also generates simplified volumetric reconstructions from orthopedic X-rays to enhance spatial understanding of:
