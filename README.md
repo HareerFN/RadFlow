@@ -303,17 +303,13 @@ Experimental evaluation demonstrated:
 
 # Team
 
-| Name | Role |
-|---|---|
-| [Hareer Alnamassi](https://www.linkedin.com/in/hareer-alnamassi?utm_source=share_via&utm_content=profile&utm_medium=member_ios) | Project Lead |
-| [Ghaida Alsabti](https://www.linkedin.com/in/ghaida-alsabti-8283b9279?utm_source=share_via&utm_content=profile&utm_medium=member_ios) | AI Development |
-| [Nada Almutairi](https://www.linkedin.com/in/nada-almutairi-9544aa290?utm_source=share_via&utm_content=profile&utm_medium=member_ios) | AI Development |
-| [Norah Almezied](https://www.linkedin.com/in/norah-almezied-738429385?utm_source=share_via&utm_content=profile&utm_medium=member_ios) | AI Development |
+- [Hareer Alnamassi](https://www.linkedin.com/in/hareer-alnamassi?utm_source=share_via&utm_content=profile&utm_medium=member_ios)
+- [Ghaida Alsabti](https://www.linkedin.com/in/ghaida-alsabti-8283b9279?utm_source=share_via&utm_content=profile&utm_medium=member_ios)
+- [Nada Almutairi](https://www.linkedin.com/in/nada-almutairi-9544aa290?utm_source=share_via&utm_content=profile&utm_medium=member_ios)
+- [Norah Almezied](https://www.linkedin.com/in/norah-almezied-738429385?utm_source=share_via&utm_content=profile&utm_medium=member_ios)
 
 ### Supervisor
 Prof. Wided Abd. Lejouad Chaari
-
----
 
 # Disclaimer
 
