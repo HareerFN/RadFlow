@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XRAY·3D — Volumetric Viewer</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@300;400;600&display=swap');
+
+  :root {
+    --bg: #020408;
+    --panel: #050d15;
+    --border: #0a2a3a;
+    --glow: #00e5ff;
+    --glow2: #0066ff;
+    --accent: #00ff88;
+    --warn: #ff6b35;
+    --text: #a8d8ea;
+    --text-dim: #3a6070;
+    --mono: 'Share Tech Mono', monospace;
+    --sans: 'Barlow', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ─── SCANLINE OVERLAY ─── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,229,255,0.015) 2px,
+      rgba(0,229,255,0.015) 4px
+    );
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  /* ─── HEADER ─── */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 28px;
+    border-bottom: 1px solid var(--border);
+    background: var(--panel);
+    flex-shrink: 0;
+  }
+
+  .logo {
+    font-family: var(--mono);
+    font-size: 1.1rem;
+    letter-spacing: 0.3em;
+    color: var(--glow);
+    text-shadow: 0 0 20px var(--glow);
+  }
+  .logo span { color: var(--accent); }
+
+  .header-meta {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    text-align: right;
+    line-height: 1.6;
+  }
+  .status-dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+    margin-right: 6px;
+    animation: blink 2s infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+  /* ─── LAYOUT ─── */
+  .workspace {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  /* ─── LEFT SIDEBAR ─── */
+  .sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    background: var(--panel);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    overflow-y: auto;
+  }
+
+  .sidebar-section {
+    border-bottom: 1px solid var(--border);
+    padding: 16px;
+  }
+
+  .sidebar-label {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+  }
+
+  /* ─── UPLOAD ZONE ─── */
+  .upload-zone {
+    border: 1px dashed var(--border);
+    border-radius: 4px;
+    padding: 20px 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .upload-zone:hover, .upload-zone.drag-over {
+    border-color: var(--glow);
+    background: rgba(0,229,255,0.04);
+    box-shadow: inset 0 0 20px rgba(0,229,255,0.06);
+  }
+  .upload-zone input {
+    position: absolute; inset: 0;
+    opacity: 0; cursor: pointer; width: 100%; height: 100%;
+  }
+  .upload-icon {
+    font-size: 1.6rem;
+    margin-bottom: 8px;
+    display: block;
+    filter: drop-shadow(0 0 8px var(--glow));
+  }
+  .upload-text {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+    line-height: 1.6;
+  }
+  .upload-text strong {
+    display: block;
+    color: var(--glow);
+    margin-bottom: 4px;
+  }
+
+  /* ─── CONTROLS ─── */
+  .control-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .control-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--text-dim);
+  }
+  .control-value {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--glow);
+  }
+  input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 2px;
+    background: var(--border);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+    margin-bottom: 14px;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--glow);
+    box-shadow: 0 0 8px var(--glow);
+    cursor: pointer;
+  }
+  input[type=range]::-webkit-slider-runnable-track {
+    background: linear-gradient(to right, var(--glow2), var(--glow));
+    height: 2px;
+    border-radius: 2px;
+  }
+
+  /* Mode buttons */
+  .mode-btns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  .mode-btn {
+    padding: 7px 4px;
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.05em;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.15s;
+    border-radius: 2px;
+    text-align: center;
+  }
+  .mode-btn:hover { border-color: var(--glow); color: var(--glow); }
+  .mode-btn.active {
+    background: rgba(0,229,255,0.1);
+    border-color: var(--glow);
+    color: var(--glow);
+    box-shadow: 0 0 10px rgba(0,229,255,0.2);
+  }
+
+  /* Color preset buttons */
+  .palette-btns {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .palette-btn {
+    width: 28px; height: 28px;
+    border-radius: 3px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .palette-btn.active { border-color: white; transform: scale(1.15); }
+  .palette-btn:hover { transform: scale(1.1); }
+
+  /* ─── MAIN CANVAS AREA ─── */
+  .canvas-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    background: radial-gradient(ellipse at center, #040e1a 0%, var(--bg) 100%);
+  }
+
+  .canvas-container {
+    position: relative;
+    width: min(700px, calc(100vw - 300px));
+    height: min(700px, calc(100vh - 100px));
+  }
+
+  canvas#main {
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: grab;
+    border: 1px solid var(--border);
+    box-shadow:
+      0 0 40px rgba(0,100,200,0.15),
+      0 0 1px var(--border);
+  }
+  canvas#main:active { cursor: grabbing; }
+
+  /* Corner decorations */
+  .corner {
+    position: absolute;
+    width: 16px; height: 16px;
+    border-color: var(--glow);
+    border-style: solid;
+    opacity: 0.7;
+  }
+  .corner-tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+  .corner-tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
+  .corner-bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
+  .corner-br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+
+  /* ─── HUD OVERLAYS ─── */
+  .hud-info {
+    position: absolute;
+    bottom: 14px; left: 14px;
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+    line-height: 1.8;
+    pointer-events: none;
+  }
+  .hud-controls {
+    position: absolute;
+    bottom: 14px; right: 14px;
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+    line-height: 1.8;
+    text-align: right;
+    pointer-events: none;
+  }
+
+  /* ─── EMPTY STATE ─── */
+  .empty-state {
+    position: absolute; inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+  .empty-icon {
+    width: 80px; height: 80px;
+    margin-bottom: 20px;
+    opacity: 0.15;
+  }
+  .empty-title {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.3em;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+  .empty-sub {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    color: var(--text-dim);
+    opacity: 0.5;
+    letter-spacing: 0.1em;
+  }
+
+  /* ─── RIGHT PANEL ─── */
+  .right-panel {
+    width: 0;
+    overflow: hidden;
+    transition: width 0.3s ease;
+    background: var(--panel);
+    border-left: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .right-panel.open { width: 200px; }
+  .right-inner { width: 200px; padding: 16px; }
+
+  .histogram-canvas {
+    width: 100%;
+    height: 80px;
+    display: block;
+    margin-top: 8px;
+  }
+
+  /* ─── PROCESSING OVERLAY ─── */
+  .processing-overlay {
+    position: absolute; inset: 0;
+    background: rgba(2,4,8,0.85);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    display: none;
+  }
+  .processing-overlay.active { display: flex; }
+  .proc-ring {
+    width: 50px; height: 50px;
+    border: 2px solid var(--border);
+    border-top-color: var(--glow);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .proc-text {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    color: var(--glow);
+  }
+  .proc-bar-wrap {
+    width: 160px;
+    height: 2px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .proc-bar {
+    height: 100%;
+    background: linear-gradient(to right, var(--glow2), var(--glow));
+    width: 0%;
+    transition: width 0.1s;
+    box-shadow: 0 0 8px var(--glow);
+  }
+
+  /* ─── TOOLTIP ─── */
+  .tooltip {
+    position: absolute;
+    background: rgba(5,13,21,0.95);
+    border: 1px solid var(--glow);
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    color: var(--glow);
+    padding: 6px 10px;
+    border-radius: 2px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    white-space: nowrap;
+    box-shadow: 0 0 12px rgba(0,229,255,0.3);
+  }
+  .tooltip.show { opacity: 1; }
+
+  /* ─── RESET BTN ─── */
+  .reset-btn {
+    width: 100%;
+    padding: 8px;
+    margin-top: 6px;
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.15s;
+    border-radius: 2px;
+  }
+  .reset-btn:hover {
+    border-color: var(--warn);
+    color: var(--warn);
+    box-shadow: 0 0 10px rgba(255,107,53,0.2);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">XRAY<span>·</span>3D</div>
+  <div class="header-meta">
+    <span class="status-dot"></span>SYSTEM ONLINE<br>
+    VOLUMETRIC IMAGING v2.1
+  </div>
+</header>
+
+<div class="workspace">
+
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar">
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">// Input</div>
+      <div class="upload-zone" id="uploadZone">
+        <input type="file" id="fileInput" accept="image/png,image/jpeg,image/webp">
+        <span class="upload-icon">⬡</span>
+        <div class="upload-text">
+          <strong>LOAD IMAGE</strong>
+          PNG / JPG / WEBP<br>X-ray or grayscale
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-section" id="controls3d" style="display:none">
+      <div class="sidebar-label">// Depth</div>
+      <div class="control-row">
+        <span class="control-label">Extrusion</span>
+        <span class="control-value" id="extVal">60</span>
+      </div>
+      <input type="range" id="extSlider" min="10" max="150" value="60">
+
+      <div class="control-row">
+        <span class="control-label">Threshold</span>
+        <span class="control-value" id="thrVal">30</span>
+      </div>
+      <input type="range" id="thrSlider" min="0" max="200" value="30">
+
+      <div class="control-row">
+        <span class="control-label">Layers</span>
+        <span class="control-value" id="layVal">16</span>
+      </div>
+      <input type="range" id="laySlider" min="4" max="32" value="16">
+    </div>
+
+    <div class="sidebar-section" id="controlsLight" style="display:none">
+      <div class="sidebar-label">// Render</div>
+      <div class="control-row">
+        <span class="control-label">Brightness</span>
+        <span class="control-value" id="briVal">1.0</span>
+      </div>
+      <input type="range" id="briSlider" min="5" max="30" value="10">
+
+      <div class="control-row">
+        <span class="control-label">Contrast</span>
+        <span class="control-value" id="conVal">1.2</span>
+      </div>
+      <input type="range" id="conSlider" min="5" max="30" value="12">
+
+      <div class="control-row">
+        <span class="control-label">Edge Glow</span>
+        <span class="control-value" id="egVal">0.8</span>
+      </div>
+      <input type="range" id="egSlider" min="0" max="20" value="8">
+    </div>
+
+    <div class="sidebar-section" id="controlsMode" style="display:none">
+      <div class="sidebar-label">// Render Mode</div>
+      <div class="mode-btns">
+        <button class="mode-btn active" data-mode="surface">SURFACE</button>
+        <button class="mode-btn" data-mode="wire">WIRE</button>
+        <button class="mode-btn" data-mode="volume">VOLUME</button>
+        <button class="mode-btn" data-mode="slice">SLICE</button>
+      </div>
+    </div>
+
+    <div class="sidebar-section" id="controlsColor" style="display:none">
+      <div class="sidebar-label">// Colormap</div>
+      <div class="palette-btns" id="paletteBtns">
+        <div class="palette-btn active" data-pal="xray"
+          style="background:linear-gradient(135deg,#000,#1a6080,#fff)"
+          title="X-Ray"></div>
+        <div class="palette-btn" data-pal="bone"
+          style="background:linear-gradient(135deg,#1a0a00,#7a5030,#f5e0c0)"
+          title="Bone"></div>
+        <div class="palette-btn" data-pal="thermal"
+          style="background:linear-gradient(135deg,#000,#800,#f80,#ff0)"
+          title="Thermal"></div>
+        <div class="palette-btn" data-pal="phosphor"
+          style="background:linear-gradient(135deg,#001a00,#006600,#00ff44)"
+          title="Phosphor"></div>
+        <div class="palette-btn" data-pal="plasma"
+          style="background:linear-gradient(135deg,#0d0030,#8000c0,#ff4080)"
+          title="Plasma"></div>
+        <div class="palette-btn" data-pal="cyan"
+          style="background:linear-gradient(135deg,#000820,#003060,#00e5ff)"
+          title="Cyan"></div>
+      </div>
+    </div>
+
+    <div class="sidebar-section" id="controlsAnim" style="display:none">
+      <div class="sidebar-label">// Animation</div>
+      <div class="mode-btns">
+        <button class="mode-btn active" data-anim="rotate">AUTO ROT</button>
+        <button class="mode-btn" data-anim="manual">MANUAL</button>
+      </div>
+      <button class="reset-btn" id="resetBtn">⟳ RESET VIEW</button>
+    </div>
+
+  </aside>
+
+  <!-- MAIN VIEWER -->
+  <main class="canvas-area" id="canvasArea">
+    <div class="canvas-container" id="canvasContainer">
+      <canvas id="main"></canvas>
+      <div class="corner corner-tl"></div>
+      <div class="corner corner-tr"></div>
+      <div class="corner corner-bl"></div>
+      <div class="corner corner-br"></div>
+
+      <div class="hud-info" id="hudInfo" style="display:none">
+        ROT <span id="hudRot">0°</span><br>
+        TILT <span id="hudTilt">0°</span><br>
+        ZOOM <span id="hudZoom">1.0×</span>
+      </div>
+      <div class="hud-controls" id="hudCtrl" style="display:none">
+        DRAG — Rotate<br>
+        SCROLL — Zoom<br>
+        SHIFT+DRAG — Pan
+      </div>
+
+      <!-- EMPTY STATE -->
+      <div class="empty-state" id="emptyState">
+        <svg class="empty-icon" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="10" y="10" width="60" height="60" rx="4" stroke="#00e5ff" stroke-width="2"/>
+          <line x1="10" y1="40" x2="70" y2="40" stroke="#00e5ff" stroke-width="1" stroke-dasharray="4 4"/>
+          <line x1="40" y1="10" x2="40" y2="70" stroke="#00e5ff" stroke-width="1" stroke-dasharray="4 4"/>
+          <circle cx="40" cy="40" r="15" stroke="#00e5ff" stroke-width="2"/>
+          <circle cx="40" cy="40" r="5" fill="#00e5ff" opacity="0.5"/>
+          <path d="M25 55 L40 25 L55 55" stroke="#00e5ff" stroke-width="1.5" fill="none"/>
+        </svg>
+        <div class="empty-title">AWAITING INPUT</div>
+        <div class="empty-sub">LOAD X-RAY IMAGE TO BEGIN</div>
+      </div>
+
+      <!-- PROCESSING OVERLAY -->
+      <div class="processing-overlay" id="procOverlay">
+        <div class="proc-ring"></div>
+        <div class="proc-text" id="procText">PROCESSING</div>
+        <div class="proc-bar-wrap"><div class="proc-bar" id="procBar"></div></div>
+      </div>
+
+      <div class="tooltip" id="tooltip"></div>
+    </div>
+  </main>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// XRAY·3D — Volumetric Viewer Engine
+// ═══════════════════════════════════════════════════════════════
+
+const canvas = document.getElementById('main');
+const ctx = canvas.getContext('2d');
+
+// State
+let imageData = null;
+let depthMap = null;
+let mesh = null;
+let renderMode = 'surface';
+let palette = 'xray';
+let autoRotate = true;
+
+// View state
+let rotX = -25, rotY = 30;
+let zoom = 1.0;
+let panX = 0, panY = 0;
+let animRotY = 30;
+
+// Params
+let extrusion = 60, threshold = 30, layers = 16;
+let brightness = 1.0, contrast = 1.2, edgeGlow = 0.8;
+
+// Mouse
+let dragging = false, lastMX = 0, lastMY = 0, shiftHeld = false;
+let raf = null;
+
+// ─── RESIZE ───────────────────────────────────────────────────
+function resizeCanvas() {
+  const container = document.getElementById('canvasContainer');
+  const rect = container.getBoundingClientRect();
+  canvas.width = rect.width;
+  canvas.height = rect.height;
+  if (mesh) renderFrame();
+}
+window.addEventListener('resize', resizeCanvas);
+
+// ─── UPLOAD ───────────────────────────────────────────────────
+const uploadZone = document.getElementById('uploadZone');
+const fileInput = document.getElementById('fileInput');
+
+uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
+uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
+uploadZone.addEventListener('drop', e => {
+  e.preventDefault();
+  uploadZone.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file) loadFile(file);
+});
+fileInput.addEventListener('change', e => {
+  if (e.target.files[0]) loadFile(e.target.files[0]);
+});
+
+function loadFile(file) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = new Image();
+    img.onload = () => processImage(img);
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+// ─── PROCESS IMAGE → DEPTH MAP ────────────────────────────────
+async function processImage(img) {
+  showProcessing(true);
+  await sleep(50);
+
+  // Off-screen canvas to read pixel data
+  const w = Math.min(img.width, 512);
+  const h = Math.min(img.height, 512);
+  const off = document.createElement('canvas');
+  off.width = w; off.height = h;
+  const octx = off.getContext('2d');
+  octx.drawImage(img, 0, 0, w, h);
+  imageData = octx.getImageData(0, 0, w, h);
+
+  setProc('COMPUTING DEPTH MAP', 30);
+  await sleep(80);
+
+  // Build depth map from luminance
+  depthMap = new Float32Array(w * h);
+  const d = imageData.data;
+  for (let i = 0; i < w * h; i++) {
+    const r = d[i*4], g = d[i*4+1], b = d[i*4+2];
+    const lum = 0.299*r + 0.587*g + 0.114*b;
+    depthMap[i] = lum / 255;
+  }
+
+  setProc('BUILDING GEOMETRY', 60);
+  await sleep(80);
+
+  buildMesh(w, h);
+
+  setProc('RENDERING VOLUME', 90);
+  await sleep(80);
+
+  showProcessing(false);
+  showControls(true);
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('hudInfo').style.display = 'block';
+  document.getElementById('hudCtrl').style.display = 'block';
+
+  resizeCanvas();
+  startAnimation();
+}
+
+// ─── BUILD MESH ───────────────────────────────────────────────
+function buildMesh(w, h) {
+  const step = Math.max(1, Math.floor(Math.min(w,h) / 80));
+  const verts = [];
+  const faces = [];
+  const colors = [];
+  const normals = [];
+
+  const cx = w / 2, cy = h / 2;
+  const scale = 300 / Math.max(w, h);
+
+  // Build vertex grid
+  const grid = [];
+  for (let gy = 0; gy < h; gy += step) {
+    const row = [];
+    for (let gx = 0; gx < w; gx += step) {
+      const idx = gy * w + gx;
+      const depth = depthMap[idx];
+      const x = (gx - cx) * scale;
+      const y = (gy - cy) * scale;
+      const z = depth * extrusion - extrusion * 0.5;
+      row.push([x, y, z, depth]);
+    }
+    grid.push(row);
+  }
+
+  // Build faces
+  for (let gy = 0; gy < grid.length - 1; gy++) {
+    for (let gx = 0; gx < grid[0].length - 1; gx++) {
+      const v0 = grid[gy][gx];
+      const v1 = grid[gy][gx+1];
+      const v2 = grid[gy+1][gx];
+      const v3 = grid[gy+1][gx+1];
+
+      const avgDepth = (v0[3] + v1[3] + v2[3] + v3[3]) / 4;
+
+      if (avgDepth > threshold / 255) {
+        const vi = verts.length;
+        verts.push(v0.slice(0,3), v1.slice(0,3), v2.slice(0,3), v3.slice(0,3));
+        faces.push([vi, vi+1, vi+2], [vi+1, vi+3, vi+2]);
+        for (let i = 0; i < 4; i++) colors.push(avgDepth);
+
+        // Normal
+        const nx = (v1[0]-v0[0]), ny = (v1[1]-v0[1]);
+        const mx2 = (v2[0]-v0[0]), my2 = (v2[1]-v0[1]);
+        const nz = nx * my2 - ny * mx2;
+        const nlen = Math.sqrt(nx*nx + ny*ny + nz*nz) || 1;
+        const n = [nx/nlen, ny/nlen, nz/nlen];
+        normals.push(n, n, n, n);
+      }
+    }
+  }
+
+  mesh = { verts, faces, colors, normals, w, h };
+}
+
+// ─── ANIMATION LOOP ───────────────────────────────────────────
+function startAnimation() {
+  if (raf) cancelAnimationFrame(raf);
+  function loop() {
+    if (autoRotate) {
+      animRotY += 0.3;
+      rotY = animRotY;
+    }
+    renderFrame();
+    raf = requestAnimationFrame(loop);
+  }
+  loop();
+}
+
+// ─── RENDER FRAME ─────────────────────────────────────────────
+function renderFrame() {
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+
+  // Background
+  const bg = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, W*0.6);
+  bg.addColorStop(0, '#040e1a');
+  bg.addColorStop(1, '#020408');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+
+  if (!mesh) return;
+
+  const { verts, faces, colors, normals } = mesh;
+
+  // Transform matrices
+  const rxRad = rotX * Math.PI / 180;
+  const ryRad = rotY * Math.PI / 180;
+
+  const cosX = Math.cos(rxRad), sinX = Math.sin(rxRad);
+  const cosY = Math.cos(ryRad), sinY = Math.sin(ryRad);
+
+  const cx = W/2 + panX, cy = H/2 + panY;
+  const fov = 400;
+
+  // Project vertices
+  const projected = verts.map(([x, y, z]) => {
+    // Rotate Y
+    let rx = x * cosY + z * sinY;
+    let rz = -x * sinY + z * cosY;
+    // Rotate X
+    let ry = y * cosX - rz * sinX;
+    rz = y * sinX + rz * cosX;
+
+    // Perspective
+    const scale = (fov / (fov + rz)) * zoom;
+    return [rx * scale + cx, ry * scale + cy, rz, scale];
+  });
+
+  // Sort faces by depth
+  const sortedFaces = faces.map((f, i) => {
+    const z = (projected[f[0]][2] + projected[f[1]][2] + projected[f[2]][2]) / 3;
+    return { f, z, ci: f[0] };
+  }).sort((a, b) => b.z - a.z);
+
+  // Draw faces
+  if (renderMode === 'surface' || renderMode === 'volume') {
+    for (const { f, ci } of sortedFaces) {
+      const [ax, ay] = projected[f[0]];
+      const [bx, by] = projected[f[1]];
+      const [cx2, cy2] = projected[f[2]];
+
+      const depth = colors[ci];
+
+      // Backface cull
+      const cross = (bx-ax)*(cy2-ay) - (by-ay)*(cx2-ax);
+      if (cross > 0) continue;
+
+      // Lighting
+      const n = normals[ci] || [0,0,1];
+      const light = [0.3, -0.5, 0.8];
+      const nl = Math.max(0.15, n[0]*light[0] + n[1]*light[1] + n[2]*light[2]);
+      const lit = depth * nl * brightness;
+
+      ctx.beginPath();
+      ctx.moveTo(ax, ay);
+      ctx.lineTo(bx, by);
+      ctx.lineTo(cx2, cy2);
+      ctx.closePath();
+
+      ctx.fillStyle = getColor(lit, depth);
+      ctx.fill();
+
+      if (renderMode === 'volume') {
+        ctx.strokeStyle = getEdgeColor(depth * 0.3);
+        ctx.lineWidth = 0.3;
+        ctx.stroke();
+      }
+    }
+  }
+
+  if (renderMode === 'wire') {
+    ctx.lineWidth = 0.6;
+    for (const { f, ci } of sortedFaces) {
+      const [ax, ay] = projected[f[0]];
+      const [bx, by] = projected[f[1]];
+      const [cx2, cy2] = projected[f[2]];
+      const depth = colors[ci];
+      if (depth < 0.1) continue;
+      ctx.beginPath();
+      ctx.moveTo(ax, ay); ctx.lineTo(bx, by);
+      ctx.lineTo(cx2, cy2); ctx.closePath();
+      ctx.strokeStyle = getEdgeColor(depth);
+      ctx.stroke();
+    }
+  }
+
+  if (renderMode === 'slice') {
+    // Draw horizontal scan slice
+    const sliceY = cy + Math.sin(Date.now() * 0.001) * 80;
+    ctx.save();
+    ctx.fillStyle = 'rgba(0,229,255,0.06)';
+    ctx.fillRect(0, sliceY - 2, W, 4);
+    ctx.fillStyle = 'rgba(0,229,255,0.15)';
+    ctx.fillRect(0, sliceY - 1, W, 2);
+    ctx.restore();
+
+    for (const { f, ci } of sortedFaces) {
+      const [ax, ay] = projected[f[0]];
+      const [bx, by] = projected[f[1]];
+      const [cx2, cy2] = projected[f[2]];
+      const depth = colors[ci];
+      ctx.beginPath();
+      ctx.moveTo(ax, ay); ctx.lineTo(bx, by);
+      ctx.lineTo(cx2, cy2); ctx.closePath();
+
+      const minY = Math.min(ay, by, cy2);
+      const maxY = Math.max(ay, by, cy2);
+      const hit = sliceY >= minY && sliceY <= maxY;
+
+      if (hit) {
+        ctx.fillStyle = `rgba(0,229,255,${depth * 0.9})`;
+        ctx.strokeStyle = `rgba(0,229,255,${depth})`;
+        ctx.lineWidth = 0.8;
+      } else {
+        ctx.fillStyle = getColor(depth * 0.3, depth);
+        ctx.strokeStyle = 'transparent';
+      }
+      ctx.fill();
+      if (hit) ctx.stroke();
+    }
+  }
+
+  // HUD
+  document.getElementById('hudRot').textContent = `${(rotY % 360 | 0)}°`;
+  document.getElementById('hudTilt').textContent = `${rotX | 0}°`;
+  document.getElementById('hudZoom').textContent = `${zoom.toFixed(1)}×`;
+}
+
+// ─── COLOR FUNCTIONS ──────────────────────────────────────────
+const palettes = {
+  xray:    (v) => `rgb(${v*255|0},${v*255|0},${v*255|0})`,
+  bone:    (v) => `rgb(${v*210|0},${v*170|0},${v*130|0})`,
+  thermal: (v) => {
+    if (v < 0.33) return `rgb(${v*3*180|0},0,0)`;
+    if (v < 0.66) return `rgb(180,${(v-0.33)*3*255|0},0)`;
+    return `rgb(255,255,${(v-0.66)*3*255|0})`;
+  },
+  phosphor:(v) => `rgb(0,${v*255|0},${v*80|0})`,
+  plasma:  (v) => `rgb(${v*200|0},${v*50|0},${v*255|0})`,
+  cyan:    (v) => `rgb(${v*20|0},${v*160|0},${v*255|0})`,
+};
+
+const edgePalettes = {
+  xray:    (v) => `rgba(${v*255|0},${v*255|0},${v*255|0},0.5)`,
+  bone:    (v) => `rgba(${v*230|0},${v*180|0},${v*130|0},0.5)`,
+  thermal: (v) => `rgba(255,${v*200|0},0,0.5)`,
+  phosphor:(v) => `rgba(0,${v*255|0},${v*100|0},0.5)`,
+  plasma:  (v) => `rgba(${v*220|0},0,${v*255|0},0.5)`,
+  cyan:    (v) => `rgba(0,${v*200|0},255,0.5)`,
+};
+
+function getColor(v, raw) {
+  const fn = palettes[palette] || palettes.xray;
+  return fn(Math.max(0, Math.min(1, v * contrast)));
+}
+function getEdgeColor(v) {
+  const fn = edgePalettes[palette] || edgePalettes.xray;
+  return fn(Math.max(0, Math.min(1, v * edgeGlow)));
+}
+
+// ─── MOUSE / TOUCH ────────────────────────────────────────────
+canvas.addEventListener('mousedown', e => {
+  dragging = true; lastMX = e.clientX; lastMY = e.clientY;
+  shiftHeld = e.shiftKey;
+  if (autoRotate && !shiftHeld) { autoRotate = false; }
+});
+window.addEventListener('mouseup', () => { dragging = false; });
+window.addEventListener('mousemove', e => {
+  if (!dragging) return;
+  const dx = e.clientX - lastMX, dy = e.clientY - lastMY;
+  if (e.shiftKey) { panX += dx; panY += dy; }
+  else { rotY += dx * 0.5; rotX += dy * 0.5; animRotY = rotY; }
+  lastMX = e.clientX; lastMY = e.clientY;
+});
+canvas.addEventListener('wheel', e => {
+  e.preventDefault();
+  zoom = Math.max(0.2, Math.min(4, zoom - e.deltaY * 0.002));
+}, { passive: false });
+
+// Touch
+let lastTX = 0, lastTY = 0, lastPinch = 0;
+canvas.addEventListener('touchstart', e => {
+  if (e.touches.length === 1) {
+    dragging = true; lastTX = e.touches[0].clientX; lastTY = e.touches[0].clientY;
+    if (autoRotate) autoRotate = false;
+  }
+  if (e.touches.length === 2) {
+    lastPinch = Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY
+    );
+  }
+}, { passive: true });
+canvas.addEventListener('touchmove', e => {
+  e.preventDefault();
+  if (e.touches.length === 1 && dragging) {
+    const dx = e.touches[0].clientX - lastTX;
+    const dy = e.touches[0].clientY - lastTY;
+    rotY += dx * 0.5; rotX += dy * 0.5; animRotY = rotY;
+    lastTX = e.touches[0].clientX; lastTY = e.touches[0].clientY;
+  }
+  if (e.touches.length === 2) {
+    const d = Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY
+    );
+    zoom = Math.max(0.2, Math.min(4, zoom * (d / lastPinch)));
+    lastPinch = d;
+  }
+}, { passive: false });
+canvas.addEventListener('touchend', () => { dragging = false; });
+
+// ─── CONTROLS ─────────────────────────────────────────────────
+function bindSlider(id, valId, min, max, decimals, cb) {
+  const sl = document.getElementById(id);
+  const vl = document.getElementById(valId);
+  sl.addEventListener('input', () => {
+    const v = parseFloat(sl.value);
+    const mapped = min + (v / 100) * (max - min);
+    vl.textContent = mapped.toFixed(decimals);
+    cb(mapped);
+  });
+}
+
+document.getElementById('extSlider').addEventListener('input', function() {
+  extrusion = parseFloat(this.value);
+  document.getElementById('extVal').textContent = extrusion;
+  if (imageData) rebuildMesh();
+});
+document.getElementById('thrSlider').addEventListener('input', function() {
+  threshold = parseFloat(this.value);
+  document.getElementById('thrVal').textContent = threshold;
+  if (imageData) rebuildMesh();
+});
+document.getElementById('laySlider').addEventListener('input', function() {
+  layers = parseFloat(this.value);
+  document.getElementById('layVal').textContent = layers;
+  if (imageData) rebuildMesh();
+});
+document.getElementById('briSlider').addEventListener('input', function() {
+  brightness = parseFloat(this.value) / 10;
+  document.getElementById('briVal').textContent = brightness.toFixed(1);
+});
+document.getElementById('conSlider').addEventListener('input', function() {
+  contrast = parseFloat(this.value) / 10;
+  document.getElementById('conVal').textContent = contrast.toFixed(1);
+});
+document.getElementById('egSlider').addEventListener('input', function() {
+  edgeGlow = parseFloat(this.value) / 10;
+  document.getElementById('egVal').textContent = edgeGlow.toFixed(1);
+});
+
+document.querySelectorAll('.mode-btn[data-mode]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.mode-btn[data-mode]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderMode = btn.dataset.mode;
+  });
+});
+
+document.querySelectorAll('[data-anim]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('[data-anim]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    autoRotate = btn.dataset.anim === 'rotate';
+    if (autoRotate) animRotY = rotY;
+  });
+});
+
+document.querySelectorAll('.palette-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.palette-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    palette = btn.dataset.pal;
+  });
+});
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  rotX = -25; rotY = 30; animRotY = 30;
+  zoom = 1.0; panX = 0; panY = 0;
+  autoRotate = true;
+  document.querySelectorAll('[data-anim]').forEach(b => b.classList.remove('active'));
+  document.querySelector('[data-anim="rotate"]').classList.add('active');
+});
+
+// ─── HELPERS ──────────────────────────────────────────────────
+function rebuildMesh() {
+  if (!imageData || !depthMap) return;
+  buildMesh(imageData.width, imageData.height);
+}
+
+function showProcessing(show) {
+  document.getElementById('procOverlay').classList.toggle('active', show);
+  if (!show) document.getElementById('procBar').style.width = '0%';
+}
+
+function setProc(text, pct) {
+  document.getElementById('procText').textContent = text;
+  document.getElementById('procBar').style.width = pct + '%';
+}
+
+function showControls(show) {
+  ['controls3d','controlsLight','controlsMode','controlsColor','controlsAnim'].forEach(id => {
+    document.getElementById(id).style.display = show ? 'block' : 'none';
+  });
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ─── INIT ─────────────────────────────────────────────────────
+resizeCanvas();
+</script>
+</body>
+</html>
