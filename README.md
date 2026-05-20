@@ -155,14 +155,15 @@ This module focuses on:
 - healing-stage synthesis
 - segmentation-guided generation
 - U-Net + PatchGAN architectures
+- Visual Conditional U-Net
 
 The pipeline preserves global bone structure while generating localized implant and healing outcomes.
 
 ### Core Components
 - U-Net Generator
 - PatchGAN Discriminator
-- Bone mask conditioning
-- Implant mask guidance
+- Bone +Implant MASKs conditioning
+
 
 ---
 
@@ -172,6 +173,7 @@ This module handles:
 - patient-friendly medical explanations
 - multimodal caption generation
 - image caption evaluation
+- LLM as judge
 
 The generated captions simplify radiological interpretation for non-medical users while preserving educational meaning.
 
@@ -182,7 +184,7 @@ The generated captions simplify radiological interpretation for non-medical user
 This module contains:
 - HTML educational interfaces
 - sequential fracture journey visualization
-- interactive reconstruction display
+- interactive reconstruction display (Rotate + Zoom)
 
 It demonstrates fracture → fixation → healing progression in an accessible patient-oriented workflow.
 
@@ -194,11 +196,12 @@ This folder includes:
 - dataset preparation
 - augmentation
 - segmentation training
+- Masks alignment
 - validation workflows
 
 ### Included Tasks
 - X-ray preprocessing
-- augmentation
+- Medical Images augmentation
 - bone segmentation
 - implant segmentation
 - dataset refinement
@@ -243,7 +246,7 @@ These masks were used as spatial guidance during the generation process.
 # Architecture
 
 RadFlow uses a multimodal generative framework based on:
-- U-Net architectures
+- U-Net architectures (Training from scratch)
 - PatchGAN discriminators
 - segmentation-guided synthesis
 - multimodal conditioning
